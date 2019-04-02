@@ -1,3 +1,9 @@
+" Download vim-plug if missing
+if empty(glob("~/.local/share/nvim/site/autoload/plug.vim"))
+  silent! execute '!curl --create-dirs -fsSLo ~/.local/share/nvim/site/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * silent! PlugInstall
+endif
+
 if has('win32') || has('win64')
   let g:plugged_home = '~/AppData/Local/nvim/plugged'
 else
