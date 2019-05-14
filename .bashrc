@@ -120,3 +120,4 @@ fi
 alias vi='nvim'
 alias vim='nvim'
 
+source ~/.customrc
