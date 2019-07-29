@@ -116,8 +116,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# alias for neovim
-alias vi='nvim'
-alias vim='nvim'
-
-source ~/.customrc
+if [ -f ~/.customrc ]; then
+    . ~/.customrc
+fi

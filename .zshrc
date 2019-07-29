@@ -105,8 +105,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# alias for neovim
-alias vi='nvim'
-alias vim='nvim'
-
-source ~/.customrc
+if [ -f ~/.customrc ]; then
+    . ~/.customrc
+fi
