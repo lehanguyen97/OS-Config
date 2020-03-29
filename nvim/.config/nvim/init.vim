@@ -7,13 +7,16 @@ call plug#begin()
     Plug 'scrooloose/nerdtree'
     " Better Visual Guide
     Plug 'Yggdroot/indentLine'
+    " Session mamanger
+    Plug 'tpope/vim-obsession'
+    Plug 'dhruvasagar/vim-prosession'
 
     Plug 'jiangmiao/auto-pairs'
     " Language support
     Plug 'sheerun/vim-polyglot'
-    " Plug 'cespare/vim-toml'
-    " Plug 'rust-lang/rust.vim'
-    " Plug 'leafgarland/typescript-vim', {'for': ['typescript', 'typescript.tsx', 'typescriptreact']}
+    Plug 'cespare/vim-toml'
+    Plug 'rust-lang/rust.vim'
+    Plug 'leafgarland/typescript-vim', {'for': ['typescript', 'typescript.tsx', 'typescriptreact']}
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
 
@@ -28,9 +31,17 @@ endif
 " machine depend?
 let mapleader=" "
 set clipboard^=unnamed,unnamedplus
-inoremap kj <esc>
 inoremap <C-U> <C-G>u<C-U>
 nnoremap <silent> <leader><leader> :buffers<CR>:buffer<Space>
+command! BufOnly silent! execute "%bd|e#|bd#"
+nnoremap <silent> <A-L> :NERDTreeFind<CR>
+ 
+" Triger `autoread` when files changes on disk
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
+  \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif
+" Notification after file change
+autocmd FileChangedShellPost *
+  \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
 " Set filetype for typescript
 au BufNewFile,BufRead *.ts setlocal filetype=typescript
@@ -109,17 +120,17 @@ nnoremap <silent> <C-E> :NERDTreeToggle<CR>
 
 " Lightline
 let g:lightline = {
-      \ 'colorscheme': 'one',
-      \ }
+  \ 'colorscheme': 'one',
+  \ }
 
 " coc.nvim settings
 let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-rust-analyzer']
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
