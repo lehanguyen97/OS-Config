@@ -1,24 +1,37 @@
 " Plugins List
 call plug#begin()
     " UI related
-    Plug 'chriskempson/base16-vim'
+    Plug 'joshdick/onedark.vim'
     Plug 'itchyny/lightline.vim'
-    " NERDTree
-    Plug 'scrooloose/nerdtree'
     " Better Visual Guide
     Plug 'Yggdroot/indentLine'
+
+    " fzf
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+
+    " NERDTree
+    Plug 'preservim/nerdtree'
+
+    " Git plugin
+    Plug 'tpope/vim-fugitive'
+    Plug 'airblade/vim-gitgutter'
+
     " Session mamanger
     Plug 'tpope/vim-obsession'
     Plug 'dhruvasagar/vim-prosession'
 
+    " Auto insert, delete pairs
     Plug 'jiangmiao/auto-pairs'
+    Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-surround'
+    Plug 'justinmk/vim-sneak'
+
     " Language support
     Plug 'sheerun/vim-polyglot'
     Plug 'cespare/vim-toml'
     Plug 'rust-lang/rust.vim'
     Plug 'leafgarland/typescript-vim', {'for': ['typescript', 'typescript.tsx', 'typescriptreact']}
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
 
     " coc.nvim
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -32,10 +45,9 @@ endif
 let mapleader=" "
 set clipboard^=unnamed,unnamedplus
 inoremap <C-U> <C-G>u<C-U>
-nnoremap <silent> <leader><leader> :buffers<CR>:buffer<Space>
 command! BufOnly silent! execute "%bd|e#|bd#"
 nnoremap <silent> <A-L> :NERDTreeFind<CR>
- 
+
 " Triger `autoread` when files changes on disk
 autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
   \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif
@@ -64,9 +76,8 @@ if has("termguicolors")
 endif
 
 " colorscheme
-let base16colorspace=256
 set background=dark
-colorscheme base16-onedark
+colorscheme onedark
 
 set cmdheight=2
 set updatetime=300
@@ -90,19 +101,21 @@ set noswapfile
 " Search configuration
 set ignorecase                    " ignore case when searching
 set smartcase                     " turn on smartcase
+" Use <C-L> to clear the highlighting of :set hlsearch.
+nnoremap <silent> <leader>l :noh<CR>
 
 " Tab and Indent configuration
 set expandtab
 set tabstop=4
 set shiftwidth=4
 set backspace=indent,eol,start
-
-" Use <C-L> to clear the highlighting of :set hlsearch.
-nnoremap <silent> <leader>l :noh<CR>
+set nowrap
 
 " Set show whitespace characters
 set list
-set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+set listchars=tab:»\ ,extends:›,precedes:‹,nbsp:·,trail:·
+" ASCII listchars
+" set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 
 " folding
 set foldmethod=indent   " fold based on indent level
@@ -111,20 +124,24 @@ set foldenable          " don't fold files by default on open
 set foldlevelstart=10   " start with fold level of 1
 " nnoremap <space> za
 
+" vim-sneak
+let g:sneak#label = 1
+
 " FZF
-let $FZF_DEFAULT_COMMAND = 'rg --files . 2> nul'
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden . 2> nul'
 nnoremap <silent> <leader>z :Files<CR>
+nnoremap <silent> <leader>b :Buffers<CR>
 
 " NERDTree
 nnoremap <silent> <C-E> :NERDTreeToggle<CR>
 
 " Lightline
 let g:lightline = {
-  \ 'colorscheme': 'one',
+  \ 'colorscheme': 'onedark',
   \ }
 
 " coc.nvim settings
-let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-rust-analyzer']
+let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-rust-analyzer', 'coc-styled-components']
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
 inoremap <silent><expr> <TAB>
