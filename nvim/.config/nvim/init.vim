@@ -32,9 +32,13 @@ call plug#begin()
     Plug 'cespare/vim-toml'
     Plug 'rust-lang/rust.vim'
     Plug 'leafgarland/typescript-vim', {'for': ['typescript', 'typescript.tsx', 'typescriptreact']}
+    Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
     " coc.nvim
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+    " Snippets
+    Plug 'dsznajder/vscode-es7-javascript-react-snippets', { 'do': 'npm i --package-lock=false && npm run compile' }
 call plug#end()
 
 if has('win32')
@@ -46,7 +50,6 @@ let mapleader=" "
 set clipboard^=unnamed,unnamedplus
 inoremap <C-U> <C-G>u<C-U>
 command! BufOnly silent! execute "%bd|e#|bd#"
-nnoremap <silent> <A-L> :NERDTreeFind<CR>
 
 " Triger `autoread` when files changes on disk
 autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
@@ -56,13 +59,12 @@ autocmd FileChangedShellPost *
   \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
 " Set filetype for typescript
-au BufNewFile,BufRead *.ts setlocal filetype=typescript
-au BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
 au FileType css setlocal sw=2 ts=2
 au FileType html setlocal sw=2 ts=2
 au FileType javascript setlocal sw=2 ts=2
+au FileType javascriptreact setlocal sw=2 ts=2
 au FileType typescript setlocal sw=2 ts=2
-au FileType typescript.tsx setlocal sw=2 ts=2
+au FileType typescriptreact setlocal sw=2 ts=2
 
 " Configurations Part
 " UI configuration
@@ -128,12 +130,24 @@ set foldlevelstart=10   " start with fold level of 1
 let g:sneak#label = 1
 
 " FZF
+" TODO Temporarily fix for bash is not in PATH for windows
+let g:fzf_preview_window = ''
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden . 2> nul'
 nnoremap <silent> <leader>z :Files<CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 
+" Redefine Rg command to allow rg arguments to pass through
+" such as `-tyaml` for yaml files or `-F` for literal strings
+" TODO: Temporarily replace fzf#vim#with_preview() with {}
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.(<q-args>),
+  \   1, {}, <bang>0)
+
 " NERDTree
-nnoremap <silent> <C-E> :NERDTreeToggle<CR>
+let g:NERDTreeWinSize=50
+nnoremap <silent> <C-e> :NERDTreeToggle<CR>
+nnoremap <silent> <M-e> :NERDTreeFind<CR>
 
 " Lightline
 let g:lightline = {
@@ -141,7 +155,9 @@ let g:lightline = {
   \ }
 
 " coc.nvim settings
-let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier', 'coc-rust-analyzer', 'coc-styled-components']
+let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html',
+  \ 'coc-json', 'coc-prettier', 'coc-rust-analyzer', 'coc-angular', 'coc-styled-components',
+  \ 'coc-snippets']
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
 inoremap <silent><expr> <TAB>
